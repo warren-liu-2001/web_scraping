@@ -1,9 +1,13 @@
 import bs4
 import requests
+import pandas as pd
+import numpy as np
+import cleaner
 
 
 class JobObject:
-    # Here for future implementation and messing around
+    # Here for future
+    # and messing around
 
     def __init__(self, name, company, location, EZAPP, desc, days_posted):
         self.name = name
@@ -34,6 +38,7 @@ def search(maximum=10):
 
     return list_urls
 
+
 def find_job_name(list_jobs):
     names = []
     for job in list_jobs:
@@ -44,8 +49,8 @@ def find_job_name(list_jobs):
 
     return names
 
-if __name__ == '__main__':
 
+def main():
     URLS = search(10)
 
     jerbs = []
@@ -71,19 +76,38 @@ if __name__ == '__main__':
 
         comps = results.find_all('span', class_='company')
         jobs = results.find_all('h2', class_='title')
-        locs = results.find_all('span', class_='location accessible-contrast-color-location')
+        # locs = results.find_all('span', class_='location accessible-contrast-color-location')
         date_posted = results.find_all('div', class_='jobsearch-SerpJobCard-footer')
 
         list_names = find_job_name(jobs)
         list_comps = find_job_name(comps)
-        list_locs = find_job_name(locs)
+        # list_locs = find_job_name(locs)
         list_dates = find_job_name(date_posted)
         # print(list_names)
 
         jerbs.extend(list_names)
         companies.extend(list_comps)
-        location.extend(list_locs)
+        # location.extend(list_locs)
         dp.extend(list_dates)
 
-    df_core = [jerbs, companies, location, dp]
-    print(df_core)
+    # df_core = [jerbs, companies, location, dp]
+    # print(df_core)
+
+    # df_np_arr = np.array([jerbs, companies, location, dp])
+    # print(df_np_arr)
+
+    print(len(jerbs))
+    print(len(companies))
+    # print(len(location))
+    print(len(dp))
+
+    dp2 = cleaner.clean_data_array(dp)
+
+    d = {'Job Title': jerbs, 'Company': companies, 'Posted Days Ago': dp2}
+    df = pd.DataFrame(data=d)
+    return df
+
+
+if __name__ == '__main__':
+    data = main()
+    print(data)
